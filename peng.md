@@ -112,18 +112,19 @@ Q4는 2D가 아니라 3D 애니메이션이에요. Q5는 1번 사무실 책상
 
 ## 2. 캐릭터 시트 만들기 (Flow 이미지)
 
-![Flow 첫 화면 → 새 프로젝트. 이름 옆 ⋮ → 이름 바꾸기](media/img_fl01_새프로젝트.jpg)
-*Flow 첫 화면 → 새 프로젝트. 이름 옆 ⋮ → 이름 바꾸기*
+Flow 첫 화면 → **새 프로젝트**. 참고 사진이 없으니 첨부 없이 프롬프트만 넣으면 됩니다.
 
-![입력창 + → 파일 이름 검색 → 프롬프트에 추가 (사진은 화면에 끌어다 놓으면 올라가요)](media/img_fl03_사진첨부_피커.jpg)
-*입력창 + → 파일 이름 검색 → 프롬프트에 추가 (사진은 화면에 끌어다 놓으면 올라가요)*
+![입력창 오른쪽 아래 설정 → ① 이미지 ② 1:1 → ③ 생성 시 0 크레딧 (모델 Nano Banana 2.1)](media/pg_flow_img_settings.jpg)
+*입력창 오른쪽 아래 설정 → ① 이미지 ② 1:1 → ③ 생성 시 0 크레딧 (모델 Nano Banana 2.1)*
 
-**Flow에 보낸 말**
+**입력창에 붙여 넣을 프롬프트 (도우미가 준 캐릭터 시트 프롬프트)**
 
 ```text
-아래 프롬프트로 1:1 이미지 1장 만들어 줘.
 Character reference sheet on a plain light gray seamless background: a cute chubby baby penguin with round black eyes, wearing a small employee ID card badge on a blue lanyard around its neck, cute 3D animation style, Pixar style, soft vibrant colors. Three views side by side: large face close-up, full body front view, full body side view. Same character in all three views, consistent features and outfit, soft even studio lighting, no text.
 ```
+
+![프롬프트를 붙여 넣고 오른쪽 → 를 누르면 생성](media/pg_flow_sheet_prompt.jpg)
+*프롬프트를 붙여 넣고 오른쪽 → 를 누르면 생성*
 
 ![캐릭터 시트 → 02_시트에 저장. 이후 그리드 · 컷을 만들 때마다 첨부](media/peng_sheet.jpg)
 *캐릭터 시트 → 02_시트에 저장. 이후 그리드 · 컷을 만들 때마다 첨부*
@@ -144,7 +145,7 @@ Character reference sheet on a plain light gray seamless background: a cute chub
 **Flow에 보낸 말 (캐릭터 시트 첨부)**
 
 ```text
-첨부한 캐릭터 시트를 참고해서 아래 프롬프트로 9:16 세로 이미지 1장 만들어 줘.
+첨부한 캐릭터 시트를 참고해서 아래 프롬프트로 3:4 이미지 1장 만들어 줘. 시계 문자판에는 숫자 없이 바늘만 있어야 해.
 A 3x3 storyboard grid of nine vertical 3:4 panels with thin white gutters, read left to right, top to bottom, showing a 20-second comedy short in story order. The attached image is the exact character reference: a cute chubby baby penguin with round black eyes, wearing a small employee ID card badge on a blue lanyard around its neck, cute 3D animation style, Pixar style, soft vibrant colors; keep it identical in every panel. Setting is one place: an office desk with a computer monitor, keyboard, and an analog desk clock with a plain face with only hands; clean 3D office background. Each panel shows exactly one moment; the main character always fills at least a third of the panel height and the face is large and clearly visible; simple uncluttered backgrounds; absolutely no written text, letters, numbers, or logos anywhere.
 
 Panel 1: Hook - Close-up, slightly high angle. Glowing screen light illuminates the penguin's cute face as it types rapidly on the keyboard.
@@ -160,17 +161,10 @@ Panel 9: Ending - Close-up, high angle. The screen turns back on, and the pengui
 Consistent style across all nine panels: cute 3D animation style, Pixar style, warm soft lighting from the desk lamp.
 ```
 
-![✕ 9:16으로 만들었더니 2×5칸이 되고 시계에 숫자 12가 생김](media/peng_grid_x.jpg)
-*✕ 9:16으로 만들었더니 2×5칸이 되고 시계에 숫자 12가 생김*
+![완성된 그리드 — 필요한 장면 9칸을 골라 다음 단계에서 한 장씩 뽑아요](media/peng_grid_o.jpg)
+*완성된 그리드 — 필요한 장면 9칸을 골라 다음 단계에서 한 장씩 뽑아요*
 
-**다시 보낸 말 (비율만 3:4로)**
-
-```text
-방금 그리드가 2열 5행(10칸)으로 나왔고 시계에 숫자 12가 생겼어. 첨부한 캐릭터 시트를 참고해서, 방금과 같은 그리드 프롬프트로 비율만 3:4로 바꿔 다시 1장 만들어 줘. 반드시 3열 3행 9칸이고, 시계 문자판에는 숫자와 눈금 없이 바늘만 있어야 해.
-```
-
-![○ 3:4로 다시 → 3×4칸. 필요한 장면 9개가 모두 있어 이 그리드를 사용](media/peng_grid_o.jpg)
-*○ 3:4로 다시 → 3×4칸. 필요한 장면 9개가 모두 있어 이 그리드를 사용*
+> 💡 칸이 세로(3:4)인 그리드는 전체 이미지도 **3:4**로 만들면 칸이 고르게 나와요.
 
 > 💡 칸 수가 다르게 나와도 괜찮아요. 다음 단계 추출 프롬프트의 `row, column` 위치만 실제 칸에 맞게 바꾸면 됩니다.
 
@@ -215,7 +209,8 @@ Consistent style across all nine panels: cute 3D animation style, Pixar style, w
 
 설정 → **동영상 · 프레임 · 9:16 · Omni 1.1 Flash · 720p · 4초 · x1** → "생성 시 7 크레딧"
 
-![img_fl25_9대16_설정.jpg](media/img_fl25_9대16_설정.jpg)
+![동영상 → ① 프레임 ② 9:16 · Omni 1.1 Flash · 720p ③ 4초 → ④ 생성 시 7 크레딧](media/pg_flow_vid_settings.jpg)
+*동영상 → ① 프레임 ② 9:16 · Omni 1.1 Flash · 720p ③ 4초 → ④ 생성 시 7 크레딧*
 
 > ⚠️ 계정에 따라 **소재**가 기본이에요. 꼭 **프레임**으로 바꿔요.
 
@@ -224,8 +219,8 @@ Consistent style across all nine panels: cute 3D animation style, Pixar style, w
 ![시작 칸 → 파일 이름 검색 → 결과 클릭](media/img_fl17_프레임선택_검색.jpg)
 *시작 칸 → 파일 이름 검색 → 결과 클릭*
 
-![프롬프트 붙여 넣고 → 를 누르면 바로 생성](media/img_fl16_시작프레임_프롬프트.jpg)
-*프롬프트 붙여 넣고 → 를 누르면 바로 생성*
+![시작 칸에 1번 컷, 아래에 1번 영상 프롬프트 → 오른쪽 → 를 누르면 바로 생성](media/pg_flow_start_prompt.jpg)
+*시작 칸에 1번 컷, 아래에 1번 영상 프롬프트 → 오른쪽 → 를 누르면 바로 생성*
 
 <details>
 <summary>이 영상에 쓴 영상 프롬프트 9개 펼치기</summary>
@@ -387,10 +382,12 @@ instrumental, catchy cheerful comedy jazz, playful acoustic guitar, xylophone pi
 
 ### ④ 내보내기
 
-오른쪽 위 **내보내기** → 1080p · 30fps → 08_완성본
+오른쪽 위 **내보내기** → 해상도 **720p** → 08_완성본
 
-![내보내기 창 (예시는 GV80 프로젝트). 해상도 1080p로](media/cc_export.jpg)
-*내보내기 창 (예시는 GV80 프로젝트). 해상도 1080p로*
+![기본값이 4K일 수 있어요. 720p로 바꾸고 내보내기](media/pg_export.jpg)
+*기본값이 4K일 수 있어요. 720p로 바꾸고 내보내기*
+
+> 💡 Flow 영상이 720p라서 1080p · 4K로 내보내도 더 선명해지지 않고 파일만 커져요.
 
 ![완성본 장면 확인](media/peng_final_frames.jpg)
 *완성본 장면 확인*
@@ -401,9 +398,9 @@ instrumental, catchy cheerful comedy jazz, playful acoustic guitar, xylophone pi
 - [ ] 도우미가 다르게 받아 적은 답은 바로 고침
 - [ ] 반사 · 시계 숫자 · 글자 장면을 기획에서 뺌
 - [ ] 캐릭터 시트 저장
-- [ ] 그리드 칸 확인 (칸 수가 달라도 필요한 장면 9개가 있으면 OK)
+- [ ] 그리드 확인 (필요한 장면 9개가 다 있는지)
 - [ ] 컷 9장 저장 (cut01~09)
 - [ ] 영상 설정: 프레임 · 9:16 · Omni 1.1 Flash · 720p · 4초
 - [ ] 클립 9개 내려받고 이름 바꿈
 - [ ] 자막 7줄 · 7번 컷 음악 멈춤
-- [ ] 내보냄
+- [ ] 720p로 내보냄
