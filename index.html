@@ -1,0 +1,164 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>AI 영상 따라 만들기</title>
+<meta name="description" content="광고 도우미 · 쇼츠 도우미 · Google Flow · CapCut으로 20초 영상을 처음부터 끝까지 따라 만드는 가이드">
+<link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/themes/vue.css">
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
+<style>
+/* Layout: docsify sidebar + one reading column; screenshots full column width, prompts as dark copy boxes. */
+:root {
+  --paper: #f5f6f4; --surface: #ffffff; --ink: #19212b; --muted: #5d6774; --line: #e2e5e7;
+  --accent: #ff5c38; --accent-ink: #c2401f; --code-bg: #121922; --code-ink: #e6edf3;
+  --tip: #e9f2ff; --tip-line: #7aa7ec; --warn: #fff4d9; --warn-line: #e3b341; --ok: #e7f6ec; --ok-line: #57b17a; --info: #f0f1f3; --info-line: #9aa3ad;
+  --font: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --mono: "JetBrains Mono", Consolas, "D2Coding", monospace;
+  --theme-color: var(--accent);
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --paper: #0f141a; --surface: #161d25; --ink: #e8ecf0; --muted: #9aa5b1; --line: #26303b;
+    --accent: #ff7a5c; --accent-ink: #ff9b82; --code-bg: #0a0f14; --code-ink: #e6edf3;
+    --tip: #14243a; --tip-line: #3f6fb8; --warn: #2e2612; --warn-line: #a8831f; --ok: #12281b; --ok-line: #3d8a5a; --info: #1b222b; --info-line: #4b5663;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --paper: #0f141a; --surface: #161d25; --ink: #e8ecf0; --muted: #9aa5b1; --line: #26303b;
+  --accent: #ff7a5c; --accent-ink: #ff9b82; --code-bg: #0a0f14; --code-ink: #e6edf3;
+  --tip: #14243a; --tip-line: #3f6fb8; --warn: #2e2612; --warn-line: #a8831f; --ok: #12281b; --ok-line: #3d8a5a; --info: #1b222b; --info-line: #4b5663;
+  color-scheme: dark;
+}
+html, body { background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
+body { font-size: 16px; }
+.sidebar { background: var(--surface); border-right: 1px solid var(--line); }
+.sidebar > h1 { font-size: 1.05rem; text-align: left; margin: 24px 20px 12px; }
+.sidebar > h1 a { color: var(--ink); font-weight: 800; letter-spacing: -0.01em; }
+.sidebar ul li a { color: var(--muted); font-size: 0.92rem; }
+.sidebar ul li.active > a { color: var(--accent-ink); border-right: 3px solid var(--accent); font-weight: 700; }
+.sidebar .search { border-bottom: 1px solid var(--line); }
+.sidebar .search input { background: var(--paper); color: var(--ink); border-radius: 8px; }
+.sidebar-toggle { background: transparent; }
+.sidebar-toggle span { background: var(--accent); }
+.app-nav, .github-corner { display: none; }
+.content { background: var(--paper); }
+.markdown-section { max-width: 820px; padding: 32px 20px 120px; }
+.markdown-section, .markdown-section p, .markdown-section li { color: var(--ink); line-height: 1.75; }
+.markdown-section h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; margin-bottom: 0.4em; }
+.markdown-section h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.015em; margin-top: 3.2rem; padding-top: 1.2rem; border-top: 2px solid var(--ink); text-wrap: balance; }
+.markdown-section h3 { font-size: 1.15rem; font-weight: 700; margin-top: 2.2rem; color: var(--ink); }
+.markdown-section h1 a, .markdown-section h2 a, .markdown-section h3 a { color: inherit !important; }
+.markdown-section a { color: var(--accent-ink); font-weight: 600; }
+.markdown-section strong { color: var(--ink); font-weight: 750; }
+.markdown-section img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); margin: 14px 0 6px; background: var(--surface); }
+.markdown-section img + em, .markdown-section .cap { display: block; font-style: normal; font-size: 0.86rem; color: var(--muted); margin: 0 0 18px; line-height: 1.5; }
+.markdown-section video { display: block; width: 100%; max-height: 78vh; border-radius: 12px; background: #000; margin: 14px 0 6px; }
+.markdown-section code { font-family: var(--mono); background: var(--surface); border: 1px solid var(--line); color: var(--accent-ink); border-radius: 5px; padding: 1px 6px; font-size: 0.85em; }
+.markdown-section pre { position: relative; background: var(--code-bg) !important; border-radius: 10px; padding: 0; margin: 10px 0 18px; overflow-x: auto; }
+.markdown-section pre > code { display: block; background: none; border: 0; color: var(--code-ink); font-size: 0.84rem; line-height: 1.65; padding: 18px 20px 18px; white-space: pre-wrap; word-break: break-word; }
+.markdown-section pre::after { display: none; }
+.copy-btn { position: absolute; top: 8px; right: 8px; font: 600 0.78rem var(--font); color: #fff; background: var(--accent); border: 0; border-radius: 6px; padding: 5px 11px; cursor: pointer; }
+.copy-btn:hover { filter: brightness(1.08); } .copy-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+.copy-btn.done { background: #2f9e5b; }
+.markdown-section pre > code { padding-right: 76px; }
+.markdown-section blockquote { border-left: 4px solid var(--info-line); background: var(--info); border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 14px 0; color: var(--ink); }
+.markdown-section blockquote p { margin: 0; font-weight: 400; color: var(--ink); }
+.markdown-section blockquote.tip { border-color: var(--tip-line); background: var(--tip); }
+.markdown-section blockquote.warn { border-color: var(--warn-line); background: var(--warn); }
+.markdown-section blockquote.ok { border-color: var(--ok-line); background: var(--ok); }
+.markdown-section table { display: table; width: 100%; border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
+.markdown-section .tbl { overflow-x: auto; margin: 12px 0 18px; }
+.markdown-section th { background: var(--surface); color: var(--ink); font-weight: 700; }
+.markdown-section td, .markdown-section th { border: 1px solid var(--line); padding: 7px 10px; }
+.markdown-section tr:nth-child(2n) { background: transparent; }
+.markdown-section details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px; margin: 14px 0; }
+.markdown-section details[open] { padding-bottom: 12px; }
+.markdown-section summary { cursor: pointer; font-weight: 700; padding: 10px 0; color: var(--accent-ink); }
+.markdown-section .task-list-item { list-style: none; }
+.markdown-section .task-list-item input { margin-right: 8px; accent-color: var(--accent); }
+.page-toc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; margin: 22px 0 8px; }
+.page-toc b { display: block; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+.page-toc ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 18px; }
+.page-toc li { margin: 0; }
+.page-toc a { color: var(--ink) !important; font-weight: 600; font-size: 0.95rem; text-decoration: none; }
+.page-toc a:hover { color: var(--accent-ink) !important; }
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+.card { display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 16px; text-decoration: none !important; color: var(--ink) !important; min-width: 0; transition: transform .15s ease, border-color .15s ease; }
+.card:hover { transform: translateY(-2px); border-color: var(--accent); }
+.card img { margin: 0 0 8px; border-radius: 9px; aspect-ratio: 16 / 9; object-fit: cover; }
+.card .tag { font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent-ink); font-weight: 700; }
+.card strong { font-size: 1.15rem; }
+.card span:last-child { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+.edit-link { margin-top: 48px; font-size: 0.85rem; color: var(--muted); }
+#main > *:first-child { margin-top: 0; }
+@media (max-width: 768px) { .markdown-section { padding: 24px 16px 96px; } .markdown-section h1 { font-size: 1.6rem; } }
+@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+</style>
+</head>
+<body>
+<div id="app"></div>
+<script>
+// Set after the GitHub repository exists, e.g. "https://github.com/<user>/<repo>/edit/main/"
+var EDIT_BASE = "https://github.com/dlwldkdl003/ai-video-guide/edit/main/";
+window.$docsify = {
+  name: "🎬 AI 영상 따라 만들기",
+  loadSidebar: true, subMaxLevel: 2, maxLevel: 3, auto2top: true,
+  homepage: "README.md", themeColor: "#ff5c38",
+  search: { placeholder: "가이드 검색", noData: "찾는 내용이 없어요", depth: 3 },
+  plugins: [function (hook, vm) {
+    hook.doneEach(function () {
+      var sec = document.querySelector(".markdown-section"); if (!sec) return;
+      // callouts by leading emoji
+      sec.querySelectorAll("blockquote").forEach(function (q) {
+        var t = q.textContent.trim();
+        if (/^💡/.test(t)) q.classList.add("tip"); else if (/^⚠️/.test(t)) q.classList.add("warn"); else if (/^✅/.test(t)) q.classList.add("ok");
+      });
+      // tables scroll inside their own box on phones
+      sec.querySelectorAll("table").forEach(function (t) {
+        if (t.parentNode.classList.contains("tbl")) return;
+        var w = document.createElement("div"); w.className = "tbl"; t.parentNode.insertBefore(w, t); w.appendChild(t);
+      });
+      // copy buttons
+      sec.querySelectorAll("pre").forEach(function (pre) {
+        if (pre.querySelector(".copy-btn")) return;
+        var b = document.createElement("button"); b.type = "button"; b.className = "copy-btn"; b.textContent = "복사";
+        b.addEventListener("click", function () {
+          var text = pre.querySelector("code").innerText;
+          var ok = function () { b.textContent = "복사됨"; b.classList.add("done"); setTimeout(function () { b.textContent = "복사"; b.classList.remove("done"); }, 1400); };
+          if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, function () { sel(); });
+          else sel();
+          function sel() { var r = document.createRange(); r.selectNodeContents(pre.querySelector("code")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand("copy"); ok(); } catch (e) {} }
+        });
+        pre.appendChild(b);
+      });
+      // on-page table of contents above the first step
+      var h2s = sec.querySelectorAll("h2");
+      if (h2s.length >= 4 && !sec.querySelector(".page-toc")) {
+        var box = document.createElement("nav"); box.className = "page-toc"; box.setAttribute("aria-label", "목차");
+        var ol = document.createElement("ol"); box.innerHTML = "<b>목차</b>";
+        h2s.forEach(function (h) {
+          var li = document.createElement("li"), a = document.createElement("a");
+          a.textContent = h.textContent; a.href = location.hash.split("?")[0] + "?id=" + h.id;
+          li.appendChild(a); ol.appendChild(li);
+        });
+        box.appendChild(ol); h2s[0].parentNode.insertBefore(box, h2s[0]);
+      }
+      // edit link for the instructor
+      if (EDIT_BASE && !sec.querySelector(".edit-link")) {
+        var file = vm.route.file; var p = document.createElement("p"); p.className = "edit-link";
+        p.innerHTML = '<a href="' + EDIT_BASE + encodeURI(file) + '" target="_blank" rel="noopener">✏️ 이 페이지 고치기 (GitHub)</a>';
+        sec.appendChild(p);
+      }
+    });
+  }]
+};
+</script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/docsify.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/search.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/zoom-image.min.js"></script>
+</body>
+</html>
