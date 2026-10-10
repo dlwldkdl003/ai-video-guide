@@ -106,7 +106,7 @@ body { font-size: 16px; }
 var EDIT_BASE = "https://github.com/dlwldkdl003/ai-video-guide/edit/main/";
 // SHA-256 of the instructor password ("" = edit links never shown). This only hides the links;
 // the site itself can only be changed by the GitHub account that owns the repository.
-var EDIT_HASH = "";
+var EDIT_HASH = "e0b08ad65f5b6f6b75d18c8642a041ca1160609af1b7dfc55ab7f2d293fd8758";
 function editUnlocked() { try { return !!EDIT_HASH && localStorage.getItem("guide-edit") === EDIT_HASH; } catch (e) { return false; } }
 (function () {
   if (!/[?&]edit\b/.test(location.search + location.hash) || !EDIT_HASH || !window.crypto || !crypto.subtle) return;
