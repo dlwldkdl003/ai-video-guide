@@ -104,6 +104,20 @@ body { font-size: 16px; }
 <script>
 // Set after the GitHub repository exists, e.g. "https://github.com/<user>/<repo>/edit/main/"
 var EDIT_BASE = "https://github.com/dlwldkdl003/ai-video-guide/edit/main/";
+// SHA-256 of the instructor password ("" = edit links never shown). This only hides the links;
+// the site itself can only be changed by the GitHub account that owns the repository.
+var EDIT_HASH = "";
+function editUnlocked() { try { return !!EDIT_HASH && localStorage.getItem("guide-edit") === EDIT_HASH; } catch (e) { return false; } }
+(function () {
+  if (!/[?&]edit\b/.test(location.search + location.hash) || !EDIT_HASH || !window.crypto || !crypto.subtle) return;
+  if (editUnlocked()) { if (confirm("편집 모드를 끌까요?")) { try { localStorage.removeItem("guide-edit"); } catch (e) {} location.replace(location.pathname + location.hash.replace(/[?&]edit\b/, "")); } return; }
+  var pw = prompt("편집 비밀번호"); if (!pw) return;
+  crypto.subtle.digest("SHA-256", new TextEncoder().encode(pw)).then(function (buf) {
+    var hex = Array.prototype.map.call(new Uint8Array(buf), function (b) { return ("0" + b.toString(16)).slice(-2); }).join("");
+    if (hex === EDIT_HASH) { try { localStorage.setItem("guide-edit", hex); } catch (e) {} location.replace(location.pathname + location.hash.replace(/[?&]edit\b/, "")); }
+    else alert("비밀번호가 맞지 않아요.");
+  });
+})();
 window.$docsify = {
   name: "🎬 AI 영상 따라 만들기",
   loadSidebar: true, subMaxLevel: 2, maxLevel: 3, auto2top: true,
@@ -147,8 +161,8 @@ window.$docsify = {
         });
         box.appendChild(ol); h2s[0].parentNode.insertBefore(box, h2s[0]);
       }
-      // edit link for the instructor
-      if (EDIT_BASE && !sec.querySelector(".edit-link")) {
+      // edit link for the instructor only: hidden until unlocked with the password (open any page with ?edit in the address)
+      if (EDIT_BASE && editUnlocked() && !sec.querySelector(".edit-link")) {
         var file = vm.route.file; var p = document.createElement("p"); p.className = "edit-link";
         p.innerHTML = '<a href="' + EDIT_BASE + encodeURI(file) + '" target="_blank" rel="noopener">✏️ 이 페이지 고치기 (GitHub)</a>';
         sec.appendChild(p);
