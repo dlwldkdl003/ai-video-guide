@@ -255,7 +255,7 @@ window.$docsify = {
     hook.doneEach(function () {
       var hide = hideFor(), editor = editUnlocked();
       // sidebar + home cards: drop hidden pages, mark them for the instructor
-      document.querySelectorAll(".sidebar-nav a").forEach(function (a) {
+      document.querySelectorAll(".sidebar-nav a:not(.section-link)").forEach(function (a) {
         var k = pageKey(a.getAttribute("href")); if (!k) return;
         var li = a.closest("li");
         if (hide.indexOf(k) >= 0) { a.setAttribute("data-nosearch", ""); li.hidden = true; }
@@ -414,7 +414,7 @@ function visibilityPanel() {
   btn.addEventListener("click", function () { panel.hidden = !panel.hidden; if (!panel.hidden) draw(); });
   function pages() {
     var seen = {}, out = [];
-    document.querySelectorAll(".sidebar-nav a").forEach(function (a) {
+    document.querySelectorAll(".sidebar-nav a:not(.section-link)").forEach(function (a) {
       var k = pageKey(a.getAttribute("href")); if (!k || seen[k]) return; seen[k] = 1;
       out.push({ key: k, name: (a.firstChild && a.firstChild.textContent || a.textContent).trim() });
     });
