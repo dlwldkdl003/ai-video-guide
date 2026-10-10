@@ -4,102 +4,209 @@
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width,initial-scale=1">
 <title>AI 영상 따라 만들기</title>
-<meta name="description" content="광고 도우미 · 쇼츠 도우미 · Google Flow · CapCut으로 20초 영상을 처음부터 끝까지 따라 만드는 가이드">
+<meta name="description" content="광고 도우미 · 쇼츠 도우미 · Google Flow · CapCut으로 영상을 처음부터 끝까지 따라 만드는 가이드">
 <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>🎬</text></svg>">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/themes/vue.css">
 <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/orioncactus/pretendard@v1.3.9/dist/web/variable/pretendardvariable-dynamic-subset.min.css">
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;600&display=swap">
 <style>
-/* Layout: docsify sidebar + one reading column; screenshots full column width, prompts as dark copy boxes. */
+/* Layout: docsify sidebar + one reading column. Steps get a numbered rail, prompts are dark copy boxes with a header bar,
+   the finished videos sit side by side as phone frames. Orange = action (copy, step number, current page). */
 :root {
-  --paper: #f5f6f4; --surface: #ffffff; --ink: #19212b; --muted: #5d6774; --line: #e2e5e7;
-  --accent: #ff5c38; --accent-ink: #c2401f; --code-bg: #121922; --code-ink: #e6edf3;
+  --paper: #f4f5f3; --surface: #ffffff; --sunk: #eceeec; --ink: #19212b; --muted: #5d6774; --line: #dfe3e5;
+  --accent: #ff5c38; --accent-ink: #c2401f; --accent-soft: #ffe9e2; --on-accent: #ffffff;
+  --code-bg: #121922; --code-head: #1b2430; --code-ink: #e6edf3; --code-muted: #8b98a8;
   --tip: #e9f2ff; --tip-line: #7aa7ec; --warn: #fff4d9; --warn-line: #e3b341; --ok: #e7f6ec; --ok-line: #57b17a; --info: #f0f1f3; --info-line: #9aa3ad;
   --font: "Pretendard Variable", Pretendard, -apple-system, "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
-  --mono: "JetBrains Mono", Consolas, "D2Coding", monospace;
+  --mono: "JetBrains Mono", Consolas, "Pretendard Variable", Pretendard, "Malgun Gothic", monospace;   /* Hangul falls through to Pretendard */
   --theme-color: var(--accent);
 }
 @media (prefers-color-scheme: dark) {
   :root:not([data-theme="light"]) {
-    --paper: #0f141a; --surface: #161d25; --ink: #e8ecf0; --muted: #9aa5b1; --line: #26303b;
-    --accent: #ff7a5c; --accent-ink: #ff9b82; --code-bg: #0a0f14; --code-ink: #e6edf3;
+    --paper: #0f141a; --surface: #161d25; --sunk: #1c242e; --ink: #e8ecf0; --muted: #9aa5b1; --line: #27313c;
+    --accent: #ff7a5c; --accent-ink: #ff9b82; --accent-soft: #3a211b; --on-accent: #1a0d09;
+    --code-bg: #0a0f14; --code-head: #131a22; --code-ink: #e6edf3; --code-muted: #7d8a99;
     --tip: #14243a; --tip-line: #3f6fb8; --warn: #2e2612; --warn-line: #a8831f; --ok: #12281b; --ok-line: #3d8a5a; --info: #1b222b; --info-line: #4b5663;
     color-scheme: dark;
   }
 }
 :root[data-theme="dark"] {
-  --paper: #0f141a; --surface: #161d25; --ink: #e8ecf0; --muted: #9aa5b1; --line: #26303b;
-  --accent: #ff7a5c; --accent-ink: #ff9b82; --code-bg: #0a0f14; --code-ink: #e6edf3;
+  --paper: #0f141a; --surface: #161d25; --sunk: #1c242e; --ink: #e8ecf0; --muted: #9aa5b1; --line: #27313c;
+  --accent: #ff7a5c; --accent-ink: #ff9b82; --accent-soft: #3a211b; --on-accent: #1a0d09;
+  --code-bg: #0a0f14; --code-head: #131a22; --code-ink: #e6edf3; --code-muted: #7d8a99;
   --tip: #14243a; --tip-line: #3f6fb8; --warn: #2e2612; --warn-line: #a8831f; --ok: #12281b; --ok-line: #3d8a5a; --info: #1b222b; --info-line: #4b5663;
   color-scheme: dark;
 }
 html, body { background: var(--paper); color: var(--ink); font-family: var(--font); -webkit-font-smoothing: antialiased; }
-body { font-size: 16px; }
+body { font-size: 16.5px; }
+:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+
+/* reading progress */
+.read-progress { position: fixed; top: 0; left: 0; right: 0; height: 3px; z-index: 30; pointer-events: none; }
+.read-progress i { display: block; height: 100%; width: 0; background: var(--accent); }
+
+/* sidebar */
 .sidebar { background: var(--surface); border-right: 1px solid var(--line); }
 .sidebar > h1 { font-size: 1.05rem; text-align: left; margin: 24px 20px 12px; }
 .sidebar > h1 a { color: var(--ink); font-weight: 800; letter-spacing: -0.01em; }
-.sidebar ul li a { color: var(--muted); font-size: 0.92rem; }
+.sidebar-nav { visibility: hidden; }
+body.nav-ready .sidebar-nav { visibility: visible; }
+.sidebar-nav .grp { display: block; margin: 18px 0 4px; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.08em; color: var(--muted); }
+.sidebar-nav > ul > li > ul { padding-left: 0; }
+.sidebar ul li a { color: var(--muted); font-size: 0.92rem; line-height: 1.45; padding: 3px 0; }
+.sidebar ul li a:hover { color: var(--ink); }
 .sidebar ul li.active > a { color: var(--accent-ink); border-right: 3px solid var(--accent); font-weight: 700; }
+.sidebar ul.app-sub-sidebar { padding-left: 12px; margin: 2px 0 8px; border-left: 1px solid var(--line); }
+.sidebar ul.app-sub-sidebar li::before { content: none; }
+.sidebar ul.app-sub-sidebar li a { font-size: 0.84rem; padding: 2px 0 2px 4px; }
 .sidebar .search { border-bottom: 1px solid var(--line); }
 .sidebar .search input { background: var(--paper); color: var(--ink); border-radius: 8px; }
 .sidebar-toggle { background: transparent; }
 .sidebar-toggle span { background: var(--accent); }
 .app-nav, .github-corner { display: none; }
+.hide-badge { margin-left: 6px; font-size: 0.68rem; font-weight: 700; color: var(--muted); border: 1px solid var(--line); border-radius: 99px; padding: 0 6px; vertical-align: 1px; }
+
+/* reading column */
 .content { background: var(--paper); }
-.markdown-section { max-width: 820px; padding: 32px 20px 120px; }
-.markdown-section, .markdown-section p, .markdown-section li { color: var(--ink); line-height: 1.75; }
-.markdown-section h1 { font-size: 2rem; font-weight: 800; letter-spacing: -0.02em; text-wrap: balance; margin-bottom: 0.4em; }
-.markdown-section h2 { font-size: 1.5rem; font-weight: 800; letter-spacing: -0.015em; margin-top: 3.2rem; padding-top: 1.2rem; border-top: 2px solid var(--ink); text-wrap: balance; }
-.markdown-section h3 { font-size: 1.15rem; font-weight: 700; margin-top: 2.2rem; color: var(--ink); }
+.markdown-section { max-width: 820px; padding: 36px 24px 140px; }
+.markdown-section, .markdown-section p, .markdown-section li { color: var(--ink); line-height: 1.8; }
+.markdown-section p { margin: 0.8em 0; }
+.markdown-section h1 { font-size: 2.05rem; font-weight: 800; letter-spacing: -0.025em; line-height: 1.3; text-wrap: balance; margin: 0 0 0.5em; }
+.markdown-section h2 { display: flex; align-items: center; gap: 12px; font-size: 1.5rem; font-weight: 800; letter-spacing: -0.015em; line-height: 1.35;
+  margin: 3.6rem 0 1rem; padding-top: 1.4rem; border-top: 1px solid var(--line); text-wrap: balance; }
+.markdown-section h2 > a { display: flex; align-items: center; gap: 12px; min-width: 0; }
+.step-no { flex: none; display: inline-grid; place-items: center; min-width: 2.1rem; height: 2.1rem; padding: 0 0.45rem; border-radius: 10px;
+  background: var(--accent); color: var(--on-accent); font-size: 1.02rem; font-weight: 800; font-variant-numeric: tabular-nums; letter-spacing: -0.02em; }
+.step-no.sub { background: var(--accent-soft); color: var(--accent-ink); }
+.markdown-section h3 { font-size: 1.15rem; font-weight: 750; margin: 2.4rem 0 0.6rem; color: var(--ink); }
 .markdown-section h1 a, .markdown-section h2 a, .markdown-section h3 a { color: inherit !important; }
 .markdown-section a { color: var(--accent-ink); font-weight: 600; }
 .markdown-section strong { color: var(--ink); font-weight: 750; }
-.markdown-section img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); margin: 14px 0 6px; background: var(--surface); }
-.markdown-section img + em, .markdown-section .cap { display: block; font-style: normal; font-size: 0.86rem; color: var(--muted); margin: 0 0 18px; line-height: 1.5; }
+.markdown-section hr { border: 0; border-top: 1px solid var(--line); margin: 2rem 0; }
+
+/* numbered how-to lists become a rail of steps */
+.markdown-section ol:not(.toc-list) { list-style: none; counter-reset: st; padding-left: 0; margin: 12px 0 18px; }
+.markdown-section ol:not(.toc-list) > li { counter-increment: st; position: relative; padding: 2px 0 10px 42px; margin: 0; }
+.markdown-section ol:not(.toc-list) > li::before { content: counter(st); position: absolute; left: 0; top: 3px; width: 26px; height: 26px; border-radius: 50%;
+  display: grid; place-items: center; background: var(--surface); border: 1.5px solid var(--accent); color: var(--accent-ink); font-size: 0.82rem; font-weight: 800; font-variant-numeric: tabular-nums; }
+.markdown-section ol:not(.toc-list) > li:not(:last-child)::after { content: ""; position: absolute; left: 12.5px; top: 32px; bottom: 0; width: 1.5px; background: var(--line); }
+.markdown-section ul { padding-left: 1.3em; }
+.markdown-section ul li { margin: 4px 0; }
+.markdown-section ul li::marker { color: var(--accent); }
+
+/* page summary card (the first "🎬 결과물 / 도구 / 비용" box) */
+.facts { display: grid; grid-template-columns: max-content 1fr; gap: 8px 18px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 18px 20px; margin: 18px 0 8px; }
+.facts dt { font-size: 0.78rem; font-weight: 700; letter-spacing: 0.06em; color: var(--accent-ink); padding-top: 3px; }
+.facts dd { margin: 0; line-height: 1.6; min-width: 0; }
+@media (max-width: 560px) { .facts { grid-template-columns: 1fr; gap: 2px; } .facts dd { margin-bottom: 8px; } }
+
+/* screenshots and videos */
+.markdown-section img { display: block; width: 100%; height: auto; border-radius: 10px; border: 1px solid var(--line); margin: 16px 0 6px; background: var(--surface); }
+.markdown-section img.narrow { width: auto; max-width: min(100%, 440px); }
+.markdown-section img + em, .markdown-section .cap { display: block; font-style: normal; font-size: 0.86rem; color: var(--muted); margin: 0 0 22px; line-height: 1.5; }
 .markdown-section video { display: block; width: 100%; max-height: 78vh; border-radius: 12px; background: #000; margin: 14px 0 6px; }
+.video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin: 16px 0 10px; }
+.video-grid figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
+.video-grid video { margin: 0; aspect-ratio: 9 / 16; max-height: none; object-fit: cover; border: 1px solid var(--line); }
+.video-grid .cap { margin: 0; font-size: 0.82rem; color: var(--ink); font-weight: 600; }
+
+/* inline code and prompt boxes */
 .markdown-section code { font-family: var(--mono); background: var(--surface); border: 1px solid var(--line); color: var(--accent-ink); border-radius: 5px; padding: 1px 6px; font-size: 0.85em; }
+.prompt { margin: 12px 0 20px; border-radius: 12px; overflow: hidden; background: var(--code-bg); border: 1px solid var(--line); }
+.prompt-head { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 7px 8px 7px 16px; background: var(--code-head); }
+.prompt-head span { font-size: 0.76rem; font-weight: 700; letter-spacing: 0.06em; color: var(--code-muted); }
+.markdown-section .prompt pre { margin: 0; border-radius: 0; background: var(--code-bg) !important; padding: 0; overflow-x: auto; }
 .markdown-section pre { position: relative; background: var(--code-bg) !important; border-radius: 10px; padding: 0; margin: 10px 0 18px; overflow-x: auto; }
-.markdown-section pre > code { display: block; background: none; border: 0; color: var(--code-ink); font-size: 0.84rem; line-height: 1.65; padding: 18px 20px 18px; white-space: pre-wrap; word-break: break-word; }
+.markdown-section pre > code { display: block; background: none; border: 0; color: var(--code-ink); font-size: 0.84rem; line-height: 1.7; padding: 16px 18px 18px; white-space: pre-wrap; word-break: break-word; }
 .markdown-section pre::after { display: none; }
-.copy-btn { position: absolute; top: 8px; right: 8px; font: 600 0.78rem var(--font); color: #fff; background: var(--accent); border: 0; border-radius: 6px; padding: 5px 11px; cursor: pointer; }
-.copy-btn:hover { filter: brightness(1.08); } .copy-btn:focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
-.copy-btn.done { background: #2f9e5b; }
-.markdown-section pre > code { padding-right: 76px; }
-.markdown-section blockquote { border-left: 4px solid var(--info-line); background: var(--info); border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 14px 0; color: var(--ink); }
+.copy-btn { font: 700 0.8rem var(--font); color: var(--on-accent); background: var(--accent); border: 0; border-radius: 7px; padding: 6px 14px; cursor: pointer; }
+.copy-btn:hover { filter: brightness(1.08); }
+.copy-btn.done { background: var(--ok-line); }
+
+/* callouts */
+.markdown-section blockquote { border-left: 4px solid var(--info-line); background: var(--info); border-radius: 0 10px 10px 0; padding: 12px 16px; margin: 16px 0; color: var(--ink); }
 .markdown-section blockquote p { margin: 0; font-weight: 400; color: var(--ink); }
+.markdown-section blockquote p + p { margin-top: 6px; }
 .markdown-section blockquote.tip { border-color: var(--tip-line); background: var(--tip); }
 .markdown-section blockquote.warn { border-color: var(--warn-line); background: var(--warn); }
 .markdown-section blockquote.ok { border-color: var(--ok-line); background: var(--ok); }
-.markdown-section table { display: table; width: 100%; border-collapse: collapse; font-size: 0.88rem; font-variant-numeric: tabular-nums; }
-.markdown-section .tbl { overflow-x: auto; margin: 12px 0 18px; }
-.markdown-section th { background: var(--surface); color: var(--ink); font-weight: 700; }
-.markdown-section td, .markdown-section th { border: 1px solid var(--line); padding: 7px 10px; }
+
+/* tables */
+.markdown-section .tbl { overflow-x: auto; margin: 14px 0 20px; border: 1px solid var(--line); border-radius: 10px; background: var(--surface); }
+.markdown-section table { display: table; width: 100%; margin: 0; border-collapse: collapse; font-size: 0.9rem; font-variant-numeric: tabular-nums; }
+.markdown-section th { background: var(--sunk); color: var(--ink); font-weight: 700; text-align: left; }
+.markdown-section td, .markdown-section th { border: 0; border-bottom: 1px solid var(--line); padding: 9px 12px; vertical-align: top; line-height: 1.6; }
+.markdown-section tr:last-child td { border-bottom: 0; }
+.markdown-section td:first-child { font-weight: 650; white-space: nowrap; }
 .markdown-section tr:nth-child(2n) { background: transparent; }
-.markdown-section details { background: var(--surface); border: 1px solid var(--line); border-radius: 10px; padding: 4px 16px; margin: 14px 0; }
-.markdown-section details[open] { padding-bottom: 12px; }
-.markdown-section summary { cursor: pointer; font-weight: 700; padding: 10px 0; color: var(--accent-ink); }
-.markdown-section .task-list-item { list-style: none; }
-.markdown-section .task-list-item input { margin-right: 8px; accent-color: var(--accent); }
-.page-toc { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 16px 20px; margin: 22px 0 8px; }
-.page-toc b { display: block; font-size: 0.78rem; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
-.page-toc ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(230px, 1fr)); gap: 4px 18px; }
-.page-toc li { margin: 0; }
-.page-toc a { color: var(--ink) !important; font-weight: 600; font-size: 0.95rem; text-decoration: none; }
+
+/* folded prompt lists */
+.markdown-section details { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 0 16px; margin: 14px 0; }
+.markdown-section details[open] { padding-bottom: 14px; }
+.markdown-section summary { cursor: pointer; font-weight: 700; padding: 13px 0; color: var(--ink); list-style: none; display: flex; align-items: center; gap: 10px; }
+.markdown-section summary::-webkit-details-marker { display: none; }
+.markdown-section summary::before { content: ""; flex: none; width: 8px; height: 8px; border-right: 2px solid var(--accent); border-bottom: 2px solid var(--accent); transform: rotate(-45deg); transition: transform .15s ease; margin: 0 4px 0 2px; }
+.markdown-section details[open] > summary::before { transform: rotate(45deg); }
+.markdown-section summary .count { margin-left: auto; font-size: 0.78rem; font-weight: 700; color: var(--muted); font-variant-numeric: tabular-nums; }
+
+/* checklist */
+.markdown-section .task-list-item { list-style: none; margin: 0; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.markdown-section .task-list-item::marker { content: ""; }
+.markdown-section .task-list-item label { display: flex; gap: 10px; align-items: flex-start; cursor: pointer; }
+.markdown-section .task-list-item input { flex: none; width: 18px; height: 18px; margin: 4px 0 0; accent-color: var(--accent); cursor: pointer; }
+.markdown-section .task-list-item.checked { color: var(--muted); }
+.check-meter { display: flex; align-items: center; gap: 12px; margin: 10px 0 6px; font-size: 0.86rem; color: var(--muted); font-variant-numeric: tabular-nums; }
+.check-meter b { color: var(--ink); }
+.check-meter .bar { flex: 1; height: 6px; border-radius: 99px; background: var(--sunk); overflow: hidden; }
+.check-meter .bar i { display: block; height: 100%; width: 0; background: var(--ok-line); transition: width .2s ease; }
+
+/* on-page table of contents */
+.page-toc { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px 18px; margin: 22px 0 8px; }
+.page-toc > b { display: block; font-size: 0.74rem; letter-spacing: 0.08em; color: var(--muted); margin-bottom: 8px; }
+.page-toc ol { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(auto-fill, minmax(240px, 1fr)); gap: 2px 18px; }
+.page-toc li { margin: 0; padding: 0; min-width: 0; }
+.page-toc a { display: flex; gap: 10px; align-items: baseline; padding: 5px 0; color: var(--ink) !important; font-weight: 600; font-size: 0.94rem; text-decoration: none; }
+.page-toc a i { flex: none; font-style: normal; min-width: 1.9rem; font-size: 0.8rem; font-weight: 800; color: var(--accent-ink); font-variant-numeric: tabular-nums; }
 .page-toc a:hover { color: var(--accent-ink) !important; }
-.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(260px, 1fr)); gap: 16px; margin: 24px 0; }
+
+/* home cards */
+.cards { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 16px; margin: 24px 0; }
 .card { display: flex; flex-direction: column; gap: 4px; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 12px 12px 16px; text-decoration: none !important; color: var(--ink) !important; min-width: 0; transition: transform .15s ease, border-color .15s ease; }
 .card:hover { transform: translateY(-2px); border-color: var(--accent); }
 .card img { margin: 0 0 8px; border-radius: 9px; aspect-ratio: 16 / 9; object-fit: cover; }
 .card .tag { font-size: 0.75rem; letter-spacing: 0.06em; color: var(--accent-ink); font-weight: 700; }
 .card strong { font-size: 1.15rem; }
 .card span:last-child { color: var(--muted); font-size: 0.9rem; font-weight: 500; }
+
+/* hidden page notice, back-to-top, instructor tools */
+.not-ready { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 28px 24px; margin-top: 24px; }
+.to-top { position: fixed; right: 18px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; width: 44px; height: 44px; border-radius: 50%; border: 1px solid var(--line);
+  background: var(--surface); color: var(--ink); font: 800 1.1rem var(--font); cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.12); }
+.to-top[hidden] { display: none; }
 .edit-link { margin-top: 48px; font-size: 0.85rem; color: var(--muted); }
+.vis-btn { position: fixed; right: 72px; bottom: calc(18px + env(safe-area-inset-bottom, 0px)); z-index: 20; height: 44px; padding: 0 16px; border-radius: 99px; border: 0;
+  background: var(--ink); color: var(--paper); font: 700 0.86rem var(--font); cursor: pointer; box-shadow: 0 4px 14px rgba(0,0,0,.18); }
+.vis-panel { position: fixed; right: 18px; bottom: calc(72px + env(safe-area-inset-bottom, 0px)); z-index: 21; width: min(360px, calc(100vw - 36px)); max-height: 70vh; overflow-y: auto;
+  background: var(--surface); color: var(--ink); border: 1px solid var(--line); border-radius: 16px; padding: 18px; box-shadow: 0 12px 40px rgba(0,0,0,.22); }
+.vis-panel h4 { margin: 0 0 4px; font-size: 1rem; }
+.vis-panel p { margin: 0 0 12px; font-size: 0.82rem; color: var(--muted); line-height: 1.55; }
+.vis-row { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 9px 0; border-top: 1px solid var(--line); font-size: 0.9rem; }
+.vis-row label { display: flex; align-items: center; gap: 8px; cursor: pointer; font-weight: 600; }
+.vis-row input { width: 18px; height: 18px; accent-color: var(--accent); }
+.vis-row em { font-style: normal; font-size: 0.76rem; font-weight: 700; color: var(--muted); }
+.vis-actions { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 14px; }
+.vis-actions button, .vis-actions a { flex: 1 1 auto; text-align: center; border-radius: 9px; padding: 9px 12px; font: 700 0.84rem var(--font); cursor: pointer; text-decoration: none !important; }
+.vis-actions .primary { background: var(--accent); color: var(--on-accent) !important; border: 0; }
+.vis-actions .ghost { background: transparent; color: var(--ink) !important; border: 1px solid var(--line); }
+.vis-note { margin-top: 10px; font-size: 0.78rem; color: var(--muted); line-height: 1.55; }
+
 #main > *:first-child { margin-top: 0; }
-@media (max-width: 768px) { .markdown-section { padding: 24px 16px 96px; } .markdown-section h1 { font-size: 1.6rem; } }
-@media (prefers-reduced-motion: reduce) { .card { transition: none; } }
+@media (max-width: 768px) { .markdown-section { padding: 26px 16px 110px; } .markdown-section h1 { font-size: 1.65rem; } .markdown-section h2 { font-size: 1.3rem; } .vis-btn { right: 70px; } }
+@media (prefers-reduced-motion: reduce) { .card, .check-meter .bar i, .markdown-section summary::before { transition: none; } }
 </style>
 </head>
 <body>
+<div class="read-progress" aria-hidden="true"><i></i></div>
 <div id="app"></div>
 <script>
 // Set after the GitHub repository exists, e.g. "https://github.com/<user>/<repo>/edit/main/"
@@ -118,14 +225,76 @@ function editUnlocked() { try { return !!EDIT_HASH && localStorage.getItem("guid
     else alert("비밀번호가 맞지 않아요.");
   });
 })();
+
+// Page visibility: pages.json lists hidden pages. Visitors never see them; the instructor sees everything (marked "숨김")
+// unless "방문자처럼 보기" is on.
+var HIDDEN = [];
+var pagesReady = fetch("pages.json?v=" + Date.now(), { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : {}; })
+  .then(function (j) { HIDDEN = (j && j.hidden) || []; }, function () {});
+function asVisitor() { try { return sessionStorage.getItem("guide-as-visitor") === "1"; } catch (e) { return false; } }
+function hideFor() { return editUnlocked() && !asVisitor() ? [] : HIDDEN; }
+function pageKey(href) { var m = /#\/([^?#]+)|^([^#?/]+)\.md/.exec(href || ""); return m ? (m[1] || m[2]).replace(/\.md$/, "") : ""; }
+
+function store(k, v) { try { if (v === undefined) return JSON.parse(localStorage.getItem(k) || "null"); localStorage.setItem(k, JSON.stringify(v)); } catch (e) { return null; } }
+
 window.$docsify = {
   name: "🎬 AI 영상 따라 만들기",
   loadSidebar: true, subMaxLevel: 2, maxLevel: 3, auto2top: true,
   homepage: "README.md", themeColor: "#ff5c38",
   search: { placeholder: "가이드 검색", noData: "찾는 내용이 없어요", depth: 3 },
   plugins: [function (hook, vm) {
+    hook.beforeEach(function (content, next) {
+      pagesReady.then(function () {
+        var key = (vm.route.file || "").replace(/\.md$/, "");
+        if (hideFor().indexOf(key) >= 0)
+          next("# 준비 중인 페이지예요\n\n<div class=\"not-ready\">이 가이드는 아직 공개 전이에요. 다른 가이드부터 둘러보세요.<br><br><a href=\"#/\">처음 화면으로 →</a></div>\n");
+        else next(content);
+      });
+    });
+
     hook.doneEach(function () {
+      var hide = hideFor(), editor = editUnlocked();
+      // sidebar + home cards: drop hidden pages, mark them for the instructor
+      document.querySelectorAll(".sidebar-nav a").forEach(function (a) {
+        var k = pageKey(a.getAttribute("href")); if (!k) return;
+        var li = a.closest("li");
+        if (hide.indexOf(k) >= 0) { a.setAttribute("data-nosearch", ""); li.hidden = true; }
+        else if (editor && HIDDEN.indexOf(k) >= 0 && !a.querySelector(".hide-badge")) a.insertAdjacentHTML("beforeend", '<span class="hide-badge">숨김</span>');
+      });
+      document.querySelectorAll(".sidebar-nav > ul > li").forEach(function (g) {
+        var sub = g.querySelector(":scope > ul"); if (!sub || !g.querySelector(":scope > .grp, :scope > p > .grp")) return;
+        g.hidden = !Array.prototype.some.call(sub.children, function (li) { return !li.hidden; });
+      });
+      document.body.classList.add("nav-ready");
+      if (/^\s*-\s/.test(document.title)) document.title = document.title.replace(/^\s*-\s*/, "");
       var sec = document.querySelector(".markdown-section"); if (!sec) return;
+      sec.querySelectorAll(".card").forEach(function (c) {
+        var k = pageKey(c.getAttribute("href"));
+        if (hide.indexOf(k) >= 0) c.remove();
+        else if (editor && HIDDEN.indexOf(k) >= 0 && !c.querySelector(".hide-badge")) c.querySelector(".tag").insertAdjacentHTML("beforeend", '<span class="hide-badge">숨김</span>');
+      });
+
+      // summary box: "**결과물** … <br> **도구** …" becomes a label/value card
+      var first = sec.querySelector("blockquote");
+      if (first && /^🎬/.test(first.textContent.trim()) && first.querySelectorAll("br").length >= 1) {
+        var parts = first.querySelector("p").innerHTML.replace(/^\s*🎬\s*/, "").split(/<br\s*\/?>/i);
+        var dl = document.createElement("dl"); dl.className = "facts";
+        var okAll = parts.every(function (p) { return /^\s*<strong>[^<]+<\/strong>/.test(p); });
+        if (okAll) {
+          parts.forEach(function (p) {
+            var m = /^\s*<strong>([^<]+)<\/strong>\s*([\s\S]*)$/.exec(p);
+            dl.insertAdjacentHTML("beforeend", "<dt>" + m[1] + "</dt><dd>" + m[2].trim() + "</dd>");
+          });
+          first.replaceWith(dl);
+        }
+      }
+
+      // tall or small screenshots (settings panels, phone frames) stay at a readable size instead of filling the column
+      sec.querySelectorAll("img").forEach(function (im) {
+        if (im.closest(".card")) return;
+        var fit = function () { if (im.naturalWidth && (im.naturalHeight > im.naturalWidth * 1.05 || im.naturalWidth < 520)) im.classList.add("narrow"); };
+        if (im.complete) fit(); else im.addEventListener("load", fit, { once: true });
+      });
       // callouts by leading emoji
       sec.querySelectorAll("blockquote").forEach(function (q) {
         var t = q.textContent.trim();
@@ -136,40 +305,154 @@ window.$docsify = {
         if (t.parentNode.classList.contains("tbl")) return;
         var w = document.createElement("div"); w.className = "tbl"; t.parentNode.insertBefore(w, t); w.appendChild(t);
       });
-      // copy buttons
+      // prompts: header bar with label + copy button
       sec.querySelectorAll("pre").forEach(function (pre) {
-        if (pre.querySelector(".copy-btn")) return;
+        if (pre.parentNode.classList.contains("prompt")) return;
+        var lang = (pre.getAttribute("data-lang") || "").toLowerCase();
+        var box = document.createElement("div"); box.className = "prompt";
+        var head = document.createElement("div"); head.className = "prompt-head";
+        head.innerHTML = "<span>" + (!lang || lang === "text" ? "프롬프트 · 복사해서 붙여 넣기" : lang.toUpperCase()) + "</span>";
         var b = document.createElement("button"); b.type = "button"; b.className = "copy-btn"; b.textContent = "복사";
         b.addEventListener("click", function () {
-          var text = pre.querySelector("code").innerText;
-          var ok = function () { b.textContent = "복사됨"; b.classList.add("done"); setTimeout(function () { b.textContent = "복사"; b.classList.remove("done"); }, 1400); };
-          if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, function () { sel(); });
-          else sel();
-          function sel() { var r = document.createRange(); r.selectNodeContents(pre.querySelector("code")); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand("copy"); ok(); } catch (e) {} }
+          var code = pre.querySelector("code"), text = code.innerText;
+          var ok = function () { b.textContent = "복사됨 ✓"; b.classList.add("done"); setTimeout(function () { b.textContent = "복사"; b.classList.remove("done"); }, 1400); };
+          var sel = function () { var r = document.createRange(); r.selectNodeContents(code); var s = getSelection(); s.removeAllRanges(); s.addRange(r); try { document.execCommand("copy"); ok(); } catch (e) {} };
+          if (navigator.clipboard) navigator.clipboard.writeText(text).then(ok, sel); else sel();
         });
-        pre.appendChild(b);
+        head.appendChild(b); pre.parentNode.insertBefore(box, pre); box.appendChild(head); box.appendChild(pre);
       });
-      // on-page table of contents above the first step
+      // folded lists show how many prompts are inside
+      sec.querySelectorAll("details").forEach(function (d) {
+        var s = d.querySelector("summary"); if (!s || s.querySelector(".count")) return;
+        var n = d.querySelectorAll("pre").length; if (n) s.insertAdjacentHTML("beforeend", '<span class="count">' + n + "개</span>");
+      });
+      // finished videos side by side
+      var vids = Array.prototype.slice.call(sec.querySelectorAll("video"));
+      if (vids.length >= 2 && !sec.querySelector(".video-grid")) {
+        var grid = document.createElement("div"); grid.className = "video-grid";
+        vids[0].parentNode.insertBefore(grid, vids[0]);
+        vids.forEach(function (v) {
+          var f = document.createElement("figure"), cap = v.nextElementSibling;
+          f.appendChild(v); if (cap && cap.classList.contains("cap")) f.appendChild(cap); grid.appendChild(f);
+        });
+        sec.querySelectorAll("p").forEach(function (p) { if (!p.textContent.trim() && !p.children.length) p.remove(); });
+      }
+      // checklist: tickable, remembered per page in this browser
+      var items = sec.querySelectorAll(".task-list-item");
+      if (items.length) {
+        var key = "guide-check:" + (vm.route.file || ""), saved = store(key) || {};
+        var meter = document.createElement("div"); meter.className = "check-meter";
+        meter.innerHTML = '<span><b>0</b> / ' + items.length + ' 완료</span><span class="bar"><i></i></span>';
+        items[0].parentNode.parentNode.insertBefore(meter, items[0].parentNode);
+        var update = function () {
+          var n = sec.querySelectorAll(".task-list-item input:checked").length;
+          meter.querySelector("b").textContent = n; meter.querySelector("i").style.width = (100 * n / items.length) + "%";
+        };
+        items.forEach(function (li, i) {
+          var box = li.querySelector("input"); if (!box || box.dataset.live) return;
+          box.dataset.live = "1"; box.disabled = false; box.removeAttribute("disabled"); box.id = "chk-" + i; box.checked = !!saved[i]; li.classList.toggle("checked", box.checked);
+          if (!box.closest("label")) {   // docsify may or may not wrap the text in a label
+            var lab = document.createElement("label"); lab.htmlFor = box.id;
+            while (box.nextSibling) lab.appendChild(box.nextSibling);
+            li.insertBefore(lab, box.nextSibling); lab.insertBefore(box, lab.firstChild);
+          }
+          box.addEventListener("change", function () { saved[i] = box.checked; store(key, saved); li.classList.toggle("checked", box.checked); update(); });
+        });
+        update();
+      }
+      // on-page table of contents, then step numbers on the h2 headings
       var h2s = sec.querySelectorAll("h2");
       if (h2s.length >= 4 && !sec.querySelector(".page-toc")) {
-        var box = document.createElement("nav"); box.className = "page-toc"; box.setAttribute("aria-label", "목차");
-        var ol = document.createElement("ol"); box.innerHTML = "<b>목차</b>";
+        var nav = document.createElement("nav"); nav.className = "page-toc"; nav.setAttribute("aria-label", "목차");
+        var ol = document.createElement("ol"); ol.className = "toc-list"; nav.innerHTML = "<b>목차</b>";
         h2s.forEach(function (h) {
+          var m = /^(\d+(?:-\d+)?)\.\s*(.*)$/.exec(h.textContent.trim());
           var li = document.createElement("li"), a = document.createElement("a");
-          a.textContent = h.textContent; a.href = location.hash.split("?")[0] + "?id=" + h.id;
+          a.href = location.hash.split("?")[0] + "?id=" + h.id;
+          a.innerHTML = "<i>" + (m ? m[1] : "·") + "</i>"; a.appendChild(document.createTextNode(m ? m[2] : h.textContent));
           li.appendChild(a); ol.appendChild(li);
         });
-        box.appendChild(ol); h2s[0].parentNode.insertBefore(box, h2s[0]);
+        nav.appendChild(ol); h2s[0].parentNode.insertBefore(nav, h2s[0]);
       }
+      h2s.forEach(function (h) {
+        var span = h.querySelector("a > span") || h.querySelector("a") || h; if (h.querySelector(".step-no")) return;
+        var m = /^(\d+(?:-\d+)?)\.\s*(.*)$/.exec(span.textContent.trim()); if (!m) return;
+        span.textContent = m[2];
+        var no = document.createElement("span"); no.className = "step-no" + (m[1].indexOf("-") > 0 ? " sub" : ""); no.textContent = m[1];
+        span.parentNode.insertBefore(no, span);
+      });
       // edit link for the instructor only: hidden until unlocked with the password (open any page with ?edit in the address)
-      if (EDIT_BASE && editUnlocked() && !sec.querySelector(".edit-link")) {
-        var file = vm.route.file; var p = document.createElement("p"); p.className = "edit-link";
-        p.innerHTML = '<a href="' + EDIT_BASE + encodeURI(file) + '" target="_blank" rel="noopener">✏️ 이 페이지 고치기 (GitHub)</a>';
+      if (EDIT_BASE && editor && !sec.querySelector(".edit-link")) {
+        var p = document.createElement("p"); p.className = "edit-link";
+        p.innerHTML = '<a href="' + EDIT_BASE + encodeURI(vm.route.file) + '" target="_blank" rel="noopener">✏️ 이 페이지 고치기 (GitHub)</a>';
         sec.appendChild(p);
       }
+      if (editor) visibilityPanel();
     });
   }]
 };
+
+// reading progress + back to top
+(function () {
+  var bar = document.querySelector(".read-progress i"), top = document.createElement("button");
+  top.className = "to-top"; top.type = "button"; top.title = "맨 위로"; top.setAttribute("aria-label", "맨 위로"); top.textContent = "↑"; top.hidden = true;
+  top.addEventListener("click", function () { window.scrollTo({ top: 0, behavior: matchMedia("(prefers-reduced-motion: reduce)").matches ? "auto" : "smooth" }); });
+  document.body.appendChild(top);
+  var tick = function () {
+    var h = document.documentElement, max = h.scrollHeight - h.clientHeight;
+    bar.style.width = (max > 0 ? Math.min(100, 100 * h.scrollTop / max) : 0) + "%"; top.hidden = h.scrollTop < 900;
+  };
+  addEventListener("scroll", tick, { passive: true }); addEventListener("resize", tick);
+})();
+
+// instructor-only panel: switch pages on/off, then save pages.json on GitHub
+function visibilityPanel() {
+  if (document.querySelector(".vis-btn")) return;
+  var btn = document.createElement("button"); btn.type = "button"; btn.className = "vis-btn"; btn.textContent = "페이지 표시 설정";
+  var panel = document.createElement("div"); panel.className = "vis-panel"; panel.hidden = true; panel.setAttribute("role", "dialog"); panel.setAttribute("aria-label", "페이지 표시 설정");
+  document.body.appendChild(btn); document.body.appendChild(panel);
+  btn.addEventListener("click", function () { panel.hidden = !panel.hidden; if (!panel.hidden) draw(); });
+  function pages() {
+    var seen = {}, out = [];
+    document.querySelectorAll(".sidebar-nav a").forEach(function (a) {
+      var k = pageKey(a.getAttribute("href")); if (!k || seen[k]) return; seen[k] = 1;
+      out.push({ key: k, name: (a.firstChild && a.firstChild.textContent || a.textContent).trim() });
+    });
+    return out;
+  }
+  function draw() {
+    var want = HIDDEN.slice();
+    panel.innerHTML = "<h4>페이지 표시 설정</h4><p>체크된 페이지만 방문자에게 보여요. 바꾼 뒤 아래 순서대로 GitHub에 저장하면 1분쯤 뒤 모두에게 반영돼요.</p>";
+    pages().forEach(function (pg) {
+      var row = document.createElement("div"); row.className = "vis-row";
+      var id = "vis-" + pg.key, on = want.indexOf(pg.key) < 0;
+      row.innerHTML = '<label for="' + id + '"><input type="checkbox" id="' + id + '"' + (on ? " checked" : "") + '><span></span></label><em>' + (on ? "표시" : "숨김") + "</em>";
+      row.querySelector("span").textContent = pg.name;
+      row.querySelector("input").addEventListener("change", function (e) {
+        var i = want.indexOf(pg.key); if (e.target.checked && i >= 0) want.splice(i, 1); if (!e.target.checked && i < 0) want.push(pg.key);
+        row.querySelector("em").textContent = e.target.checked ? "표시" : "숨김";
+      });
+      panel.appendChild(row);
+    });
+    var act = document.createElement("div"); act.className = "vis-actions";
+    act.innerHTML = '<button type="button" class="primary">① 설정 복사</button><a class="ghost" target="_blank" rel="noopener" href="' + EDIT_BASE + 'pages.json">② GitHub 열기</a>';
+    var view = document.createElement("label"); view.className = "vis-row"; view.innerHTML = '<span>방문자처럼 보기</span><input type="checkbox" id="vis-as-visitor"' + (asVisitor() ? " checked" : "") + ">";
+    var note = document.createElement("p"); note.className = "vis-note";
+    note.textContent = "② 화면에서 Ctrl+A로 전체 선택 → Ctrl+V로 붙여 넣기 → 초록색 Commit changes. '방문자처럼 보기'를 켜면 이 브라우저에서 숨김 결과를 미리 볼 수 있어요.";
+    panel.appendChild(act); panel.appendChild(view); panel.appendChild(note);
+    var copy = act.querySelector("button");
+    copy.addEventListener("click", function () {
+      var json = JSON.stringify({ "설명": "hidden에 적은 페이지는 처음 화면 카드와 왼쪽 메뉴에서 숨겨지고, 주소로 들어와도 '준비 중'으로 보여요. 편집 모드(?edit)에서는 모두 보이고, 오른쪽 아래 '페이지 표시 설정'에서 바꿀 수 있어요.", hidden: want }, null, 2) + "\n";
+      var done = function () { copy.textContent = "복사됨 ✓ 이제 ②"; };
+      if (navigator.clipboard) navigator.clipboard.writeText(json).then(done, function () { prompt("아래 내용을 복사하세요", json); });
+      else prompt("아래 내용을 복사하세요", json);
+    });
+    view.querySelector("input").addEventListener("change", function (e) {
+      try { if (e.target.checked) sessionStorage.setItem("guide-as-visitor", "1"); else sessionStorage.removeItem("guide-as-visitor"); } catch (x) {}
+      location.reload();
+    });
+  }
+}
 </script>
 <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/docsify.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/docsify@4.13.1/lib/plugins/search.min.js"></script>

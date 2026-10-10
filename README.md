@@ -5,14 +5,20 @@
 <div class="cards">
 <a class="card" href="#/gv80"><img src="media/gv80_cuts.jpg" alt="GV80 광고 컷"><span class="tag">광고 · 16:9 · 20초</span><strong>광고 따라 만들기</strong><span>제네시스 GV80 · 멀티샷 클립 9개로 컷 15개</span></a>
 <a class="card" href="#/peng"><img src="media/peng_cuts.jpg" alt="펭귄 쇼츠 컷"><span class="tag">쇼츠 · 9:16 · 20초</span><strong>쇼츠 따라 만들기</strong><span>아기 펭귄 직장인 · 참고 사진 없이 한 문장으로</span></a>
+<a class="card" href="#/ks_e1"><img src="media/ks_e1_clips.jpg" alt="렌텐마르크 장면"><span class="tag">지식 쇼츠 · 9:16 · 45초</span><strong>경제상식 · 렌텐마르크</strong><span>제미나이 기획 → Flow 멀티샷 9개 → 나레이션 편집</span></a>
+<a class="card" href="#/ks_s3"><img src="media/ks_s3_clips.jpg" alt="생존자 편향 장면"><span class="tag">지식 쇼츠 · 9:16 · 45초</span><strong>과학상식 · 생존자 편향</strong><span>잘된 쇼츠의 반전 구조만 빌려 새 주제로</span></a>
+<a class="card" href="#/mm"><img src="media/mm_card.jpg" alt="만사 무사 장면"><span class="tag">지식 쇼츠 · 9:16 · 58초</span><strong>돈의 현장 · 만사 무사</strong><span>AI 두 가지로 기획 비교 · Flow와 H3로 영상 비교</span></a>
 </div>
 
 ## 공통 흐름
 
 도우미와 기획 → 기준 시트 → 9칸 그리드 → 컷 9장 → 컷마다 영상 → 계정 전환 → 소리 → CapCut 편집
 
+지식 쇼츠는 그리드 없이: 잘된 쇼츠 분석 → 스크립트 + 팩트체크 → 멀티샷 프롬프트 → Flow에서 바로 영상 → 나레이션 → CapCut 편집
+
 ## 보는 법
 
 - 가이드 맨 위 **목차**를 누르면 그 단계로 이동해요.
-- 회색 상자의 프롬프트는 오른쪽 위 **복사** 버튼으로 복사해요.
+- 검은 상자의 프롬프트는 상자 위쪽 주황색 **복사** 버튼으로 복사해요.
+- 맨 아래 **체크리스트**는 눌러서 체크할 수 있고, 이 브라우저에 저장돼요.
 - ▶ 접힌 부분은 눌러서 펼치고, 사진은 누르면 크게 보여요.
