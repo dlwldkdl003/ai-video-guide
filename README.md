@@ -8,6 +8,8 @@
 <a class="card" href="#/ks_e1"><img src="media/ks_e1_clips.jpg" alt="렌텐마르크 장면"><span class="tag">지식 쇼츠 · 9:16 · 45초</span><strong>경제상식 · 렌텐마르크</strong><span>제미나이 기획 → Flow 멀티샷 9개 → 나레이션 편집</span></a>
 <a class="card" href="#/ks_s3"><img src="media/ks_s3_clips.jpg" alt="생존자 편향 장면"><span class="tag">지식 쇼츠 · 9:16 · 45초</span><strong>과학상식 · 생존자 편향</strong><span>잘된 쇼츠의 반전 구조만 빌려 새 주제로</span></a>
 <a class="card" href="#/mm"><img src="media/mm_card.jpg" alt="만사 무사 장면"><span class="tag">지식 쇼츠 · 9:16 · 58초</span><strong>돈의 현장 · 만사 무사</strong><span>AI 두 가지로 기획 비교 · Flow와 H3로 영상 비교</span></a>
+<a class="card" href="shin_ramyun/"><img src="media/shin_ramyun_cuts.jpg" alt="신라면 광고 컷"><span class="tag">광고 · 16:9 · 20초 · H3</span><strong>신라면 광고 제작과정 · 편집가이드</strong><span>밤 11시, 3분의 의식 · 키프레임 → H3 클립 → 0.5초 박자 편집 22컷</span></a>
+<a class="card" href="gold_cat/"><img src="media/gold_cat_cuts.jpg" alt="황금냥 쇼츠 컷"><span class="tag">쇼츠 · 9:16 · 27초 · H3</span><strong>황금냥 쇼츠 제작과정 · 편집가이드</strong><span>조퇴할 때 직장인 특이현상 · 김햄찌 스타일 4단 틀 · 25컷 자막 편집</span></a>
 </div>
 
 ## 공통 흐름

@@ -7,3 +7,6 @@
   - [✈️ 과학상식 · 생존자 편향](ks_s3.md)
   - [💰 돈의 현장 EP.01 · 만사 무사](mm.md)
   - [🧰 지식 쇼츠 프롬프트 팩](prompt_pack.md)
+- <span class="grp">제작과정 · 편집가이드</span>
+  - [🍜 신라면 광고 제작과정 · 편집가이드](shin_ramyun/index.html ':ignore')
+  - [🐱 황금냥 쇼츠 제작과정 · 편집가이드](gold_cat/index.html ':ignore')
