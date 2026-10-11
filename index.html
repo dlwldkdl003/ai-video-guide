@@ -107,7 +107,9 @@ body.nav-ready .sidebar-nav { visibility: visible; }
 .markdown-section video { display: block; width: 100%; max-height: 78vh; border-radius: 12px; background: #000; margin: 14px 0 6px; }
 .video-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(170px, 1fr)); gap: 14px; margin: 16px 0 10px; }
 .video-grid figure { margin: 0; display: flex; flex-direction: column; gap: 6px; min-width: 0; }
-.video-grid video { margin: 0; aspect-ratio: 9 / 16; max-height: none; object-fit: cover; border: 1px solid var(--line); }
+.video-grid video { margin: 0; aspect-ratio: 9 / 16; max-height: none; object-fit: contain; border: 1px solid var(--line); }
+.video-grid:has(video.wide) { grid-template-columns: repeat(auto-fill, minmax(320px, 1fr)); }
+.markdown-section video.wide { aspect-ratio: 16 / 9; max-height: none; }
 .video-grid .cap { margin: 0; font-size: 0.82rem; color: var(--ink); font-weight: 600; }
 
 /* inline code and prompt boxes */
@@ -327,16 +329,37 @@ window.$docsify = {
         var n = d.querySelectorAll("pre").length; if (n) s.insertAdjacentHTML("beforeend", '<span class="count">' + n + "개</span>");
       });
       // finished videos side by side
+      // only videos that sit next to each other (video, caption, video, ...) are grouped;
+      // a video that stands alone in its own section keeps its full width and real ratio
       var vids = Array.prototype.slice.call(sec.querySelectorAll("video"));
-      if (vids.length >= 2 && !sec.querySelector(".video-grid")) {
+      var isGap = function (el) { return el && (el.classList.contains("cap") || (el.tagName === "P" && !el.textContent.trim() && !el.children.length)); };
+      // markdown wraps a bare <video> in <p>, so compare the wrappers
+      var node = function (v) { var p = v.parentElement; return (p && p.tagName === "P" && p.childElementCount === 1) ? p : v; };
+      var runs = [], run = [];
+      vids.forEach(function (v) {
+        if (run.length) {
+          var prev = run[run.length - 1], n = node(prev).nextElementSibling;
+          while (isGap(n)) n = n.nextElementSibling;
+          if (n !== node(v)) { runs.push(run); run = []; }
+        }
+        run.push(v);
+      });
+      if (run.length) runs.push(run);
+      runs.forEach(function (group) {
+        if (group.length < 2 || group[0].closest(".video-grid")) return;
         var grid = document.createElement("div"); grid.className = "video-grid";
-        vids[0].parentNode.insertBefore(grid, vids[0]);
-        vids.forEach(function (v) {
-          var f = document.createElement("figure"), cap = v.nextElementSibling;
+        node(group[0]).parentNode.insertBefore(grid, node(group[0]));
+        group.forEach(function (v) {
+          var f = document.createElement("figure"), cap = node(v).nextElementSibling;
           f.appendChild(v); if (cap && cap.classList.contains("cap")) f.appendChild(cap); grid.appendChild(f);
         });
-        sec.querySelectorAll("p").forEach(function (p) { if (!p.textContent.trim() && !p.children.length) p.remove(); });
-      }
+      });
+      sec.querySelectorAll("p").forEach(function (p) { if (!p.textContent.trim() && !p.children.length) p.remove(); });
+      // every video keeps its own ratio (9:16 shorts stay portrait, 16:9 ads stay landscape)
+      vids.forEach(function (v) {
+        var fit = function () { if (v.videoWidth && v.videoHeight) { v.style.aspectRatio = v.videoWidth + " / " + v.videoHeight; v.classList.add(v.videoWidth > v.videoHeight ? "wide" : "tall"); } };
+        if (v.readyState >= 1) fit(); else v.addEventListener("loadedmetadata", fit);
+      });
       // checklist: tickable, remembered per page in this browser
       var items = sec.querySelectorAll(".task-list-item");
       if (items.length) {
